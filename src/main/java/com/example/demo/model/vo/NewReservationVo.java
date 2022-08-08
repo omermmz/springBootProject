@@ -1,38 +1,22 @@
 package com.example.demo.model.vo;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewReservationVo {
 
-    private String placeName;
-    private String userName;
+    private LocalDate date;
+    private LocalTime time;
+    private Long placeId;
+    private Long userId;
 
-    public String getPlaceName() {
-        return placeName;
-    }
-
-    public void setPlaceName(String placeName) {
-        this.placeName = placeName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    private LocalDateTime date;
-
-    public NewReservationVo() {
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
 }

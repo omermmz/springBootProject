@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface PlaceInfoRepository extends JpaRepository<PlaceInfo,Long> {
     Optional<PlaceInfo> findPlaceInfoByAddress(String address);
     List<PlaceInfo> findPlaceInfoByPlaceFieldId(Long id);
+    PlaceInfo findPlaceInfoByName(String name);
 }

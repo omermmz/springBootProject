@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.request.DeleteReservationRequest;
-import com.example.demo.model.request.NewReservationRequest;
-import com.example.demo.model.request.ReservationGetRequest;
-import com.example.demo.model.request.UpdateReservationRequest;
+import com.example.demo.model.dto.ReservationTimeDTO;
+import com.example.demo.model.request.*;
 import com.example.demo.manager.ResarvationManager;
 import com.example.demo.model.entity.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -37,6 +36,15 @@ public class ReservationController {
         ReservationGetRequest reservationGetRequest = new ReservationGetRequest();
         reservationGetRequest.setUserName(userName);
         return resarvationManager.getReservationsByUser(reservationGetRequest);
+    }
+    @GetMapping(path = "/getemptytime")
+    public List<ReservationTimeDTO> getReservationsAllEmptyTime(@RequestBody GetEmptyTimeRequest getEmptyTimeRequest){
+        return resarvationManager.getReservationsAllEmptyTime(getEmptyTimeRequest);
+    }
+
+    @GetMapping(path = "/getemptyspecialtime")
+    public List<ReservationTimeDTO> getReservationsAllEmptySpecialTime(@RequestBody GetEmptySpecialTimeRequest getEmptySpecialTimeRequest){
+        return resarvationManager.getReservationsAllEmptySpecialTime(getEmptySpecialTimeRequest);
     }
 
     @PostMapping

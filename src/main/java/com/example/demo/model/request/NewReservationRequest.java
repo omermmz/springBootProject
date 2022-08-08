@@ -2,7 +2,9 @@ package com.example.demo.model.request;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -10,7 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NewReservationRequest {
 
-    private LocalDateTime date;
-    private String placeName;
-    private String userName;
+    private LocalDate date;
+    private LocalTime time;
+    private Long placeId;
+    private Long userId;
 }

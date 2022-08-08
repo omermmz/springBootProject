@@ -1,24 +1,27 @@
 package com.example.demo.model.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.bytebuddy.asm.Advice;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ReservationDTO {
 
     private Long id;
-    private LocalDateTime date;
-    private String placeName;
-    private String userName;
+    private LocalDate date;
+    private LocalTime time;
+    private Long placeId;
+    private Long userId;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 
 
 

@@ -1,16 +1,14 @@
 package com.example.demo.manager;
 
+import com.example.demo.model.dto.ReservationTimeDTO;
 import com.example.demo.model.entity.Reservation;
-import com.example.demo.model.request.ReservationGetRequest;
-import com.example.demo.model.request.UpdateReservationRequest;
-import com.example.demo.model.vo.ReservationGetVo;
-import com.example.demo.model.vo.UpdateReservationVo;
-import com.example.demo.model.request.NewReservationRequest;
-import com.example.demo.model.vo.NewReservationVo;
+import com.example.demo.model.request.*;
+import com.example.demo.model.vo.*;
 import com.example.demo.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,8 +20,9 @@ public class ResarvationManager {
     public void initializeReservation(NewReservationRequest newReservationRequest){
         NewReservationVo newReservationVo = new NewReservationVo();
         newReservationVo.setDate(newReservationRequest.getDate());
-        newReservationVo.setPlaceName(newReservationRequest.getPlaceName());
-        newReservationVo.setUserName(newReservationRequest.getUserName());
+        newReservationVo.setTime(newReservationRequest.getTime());
+        newReservationVo.setPlaceId(newReservationRequest.getPlaceId());
+        newReservationVo.setUserId(newReservationRequest.getUserId());
 
         reservationService.addNewReservation(newReservationVo);
     }
@@ -35,8 +34,10 @@ public class ResarvationManager {
     public void  updateReservation(UpdateReservationRequest updateReservationRequest) {
         UpdateReservationVo updateReservationVo = new UpdateReservationVo();
         updateReservationVo.setId(updateReservationRequest.getId());
-        updateReservationVo.setDateTime(updateReservationRequest.getDateTime());
-        updateReservationVo.setUserName(updateReservationRequest.getUserName());
+        updateReservationVo.setDate(updateReservationRequest.getDate());
+        updateReservationVo.setTime(updateReservationRequest.getTime());
+        updateReservationVo.setPlaceId(updateReservationRequest.getPlaceId());
+        updateReservationVo.setUserId(updateReservationRequest.getUserId());
 
         reservationService.updateNewReservation(updateReservationVo);
     }
@@ -51,5 +52,31 @@ public class ResarvationManager {
 
         return reservationService.getReservationsByUser(reservationGetVo);
 
+    }
+
+    public List<ReservationTimeDTO> getReservationsAllEmptyTime(GetEmptyTimeRequest getEmptyTimeRequest) {
+        GetEmptyTimeVo getEmptyTimeVo = convert(getEmptyTimeRequest);
+        return reservationService.getReservationsAllEmptyTime(getEmptyTimeVo);
+    }
+
+    private GetEmptyTimeVo convert(GetEmptyTimeRequest getEmptyTimeRequest){
+        GetEmptyTimeVo getEmptyTimeVo = new GetEmptyTimeVo();
+        getEmptyTimeVo.setPlaceId(getEmptyTimeRequest.getPlaceId());
+        getEmptyTimeVo.setDate(getEmptyTimeRequest.getDate());
+        getEmptyTimeVo.setStatus(getEmptyTimeRequest.getStatus());
+        return getEmptyTimeVo;
+    }
+
+    public List<ReservationTimeDTO> getReservationsAllEmptySpecialTime(GetEmptySpecialTimeRequest getEmptySpecialTimeRequest) {
+        GetEmptySpecialTimeVo getEmptySpecialTimeVo = convert(getEmptySpecialTimeRequest);
+        return reservationService.getReservationsAllEmptySpecialTime(getEmptySpecialTimeVo);
+    }
+    private GetEmptySpecialTimeVo convert(GetEmptySpecialTimeRequest getEmptySpecialTimeRequest){
+        GetEmptySpecialTimeVo getEmptySpecialTimeVo = new GetEmptySpecialTimeVo();
+        getEmptySpecialTimeVo.setPlaceId(getEmptySpecialTimeRequest.getPlaceId());
+        getEmptySpecialTimeVo.setDate(getEmptySpecialTimeRequest.getDate());
+        getEmptySpecialTimeVo.setStatus(getEmptySpecialTimeRequest.getStatus());
+        getEmptySpecialTimeVo.setTimeInterval(getEmptySpecialTimeRequest.getTimeInterval());
+        return getEmptySpecialTimeVo;
     }
 }
