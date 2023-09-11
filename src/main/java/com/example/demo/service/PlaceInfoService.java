@@ -10,6 +10,7 @@ import com.example.demo.repository.PlaceRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +31,13 @@ public class PlaceInfoService {
 
     }
 
+    public PlaceInfoDTO getPlaceInfoByPlaceFieldId(Long placeFieldId){
+        PlaceInfo placeInfo = placeInfoRepository.findPlaceInfoByPlaceFieldId(placeFieldId).orElseThrow(()-> new UsernameNotFoundException("placeInfo is not exist"));
+        return convert(placeInfo);
+    }
+
+
+
     private void checkPlaceInfoOnGivenAddress(String address) {
         placeInfoRepository.findPlaceInfoByAddress(address).ifPresent(placeInfo -> {
             throw new IllegalStateException("Place is exists");
@@ -42,32 +50,89 @@ public class PlaceInfoService {
         placeInfo.setType(newPlaceInfoVo.getType());
         placeInfo.setName(newPlaceInfoVo.getName());
         placeInfo.setPrice(newPlaceInfoVo.getPrice());
-        placeInfo.setCity_id(newPlaceInfoVo.getCity_id());
-        placeInfo.setProvince_id(newPlaceInfoVo.getProvince_id());
+        placeInfo.setCityId(newPlaceInfoVo.getCity_id());
+        placeInfo.setProvinceId(newPlaceInfoVo.getProvince_id());
         placeInfo.setAddress(newPlaceInfoVo.getAddress());
-        placeInfo.setPhone_number(newPlaceInfoVo.getPhone_number());
+        placeInfo.setPhoneNumber(newPlaceInfoVo.getPhone_number());
+        placeInfo.setKapora(newPlaceInfoVo.getKapora());
+        placeInfo.setStartTime(newPlaceInfoVo.getStartTime());
+        placeInfo.setEndTime(newPlaceInfoVo.getEndTime());
         return placeInfo;
     }
 
     private PlaceInfoDTO convert(PlaceInfo placeInfo){
         PlaceInfoDTO placeInfoDTO = new PlaceInfoDTO();
-        placeInfoDTO.setPlace_field_id(placeInfo.getPlaceFieldId());
+        placeInfoDTO.setPlaceFieldId(placeInfo.getPlaceFieldId());
         placeInfoDTO.setType(placeInfo.getType());
         placeInfoDTO.setName(placeInfo.getName());
         placeInfoDTO.setPrice(placeInfo.getPrice());
-        placeInfoDTO.setCity_id(placeInfo.getCity_id());
-        placeInfoDTO.setProvince_id(placeInfo.getProvince_id());
+        placeInfoDTO.setCityId(placeInfo.getCityId());
+        placeInfoDTO.setProvinceId(placeInfo.getProvinceId());
         placeInfoDTO.setAddress(placeInfo.getAddress());
-        placeInfoDTO.setPhone_number(placeInfo.getPhone_number());
+        placeInfoDTO.setPhoneNumber(placeInfo.getPhoneNumber());
+        placeInfoDTO.setKapora(placeInfo.getKapora());
+        placeInfoDTO.setStartTime(placeInfo.getStartTime());
+        placeInfoDTO.setEndTime(placeInfo.getEndTime());
         return placeInfoDTO;
     }
 
-    public List<PlaceInfo> getPlaceInfos() {
-        return placeInfoRepository.findAll();
+    public List<PlaceInfoDTO> getPlaceInfos() {
+        List<PlaceInfo> placeInfos;
+        placeInfos = placeInfoRepository.findAll();
+        List<PlaceInfoDTO> placeInfoDTOS;
+        placeInfoDTOS = convertPlaceInfos(placeInfos);
+        return placeInfoDTOS;
+    }
+
+    public PlaceInfoDTO getPlaceById(Long id){
+        PlaceInfo placeInfo = placeInfoRepository.getById(id);
+        PlaceInfoDTO placeInfoDTO = convert(placeInfo);
+        return placeInfoDTO;
+    }
+
+    public List<PlaceInfoDTO> getPlaceByCity(Long cityId){
+        return convertPlaceInfos(placeInfoRepository.findPlaceInfoByCityId(cityId));
+    }
+
+    public List<PlaceInfoDTO> getPlaceByCityAndProvince(Long cityId, Long provinceId) {
+        return convertPlaceInfos(placeInfoRepository.findPlaceInfoByCityIdAndProvinceId(cityId,provinceId));
+    }
+
+    public List<PlaceInfoDTO> getPlaceByCityAndProvinceWithBetweenPrice(Long cityId, Long provinceId, Long minPrice, Long maxPrice) {
+        return convertPlaceInfos(placeInfoRepository.findPlaceInfoByCityIdAndProvinceIdAndPriceBetween(cityId,provinceId,minPrice,maxPrice));
+    }
+
+    public List<PlaceInfoDTO> getAllPlacesWithBetweenPrice(Long minPrice, Long maxPrice) {
+        return convertPlaceInfos(placeInfoRepository.findPlaceInfoByPriceBetween(minPrice,maxPrice));
+    }
+
+    public List<PlaceInfoDTO> getAllPlacesByCityWithBetweenPrice(Long cityId, Long minPrice, Long maxPrice) {
+        return convertPlaceInfos(placeInfoRepository.findPlaceInfoByCityIdAndPriceBetween(cityId,minPrice,maxPrice));
+    }
+
+    private List<PlaceInfoDTO> convertPlaceInfos(List<PlaceInfo> placeInfos){
+        List<PlaceInfoDTO> placeInfoDTOS= new ArrayList<>();
+        for(PlaceInfo placeInfo: placeInfos){
+            PlaceInfoDTO placeInfoDTO= new PlaceInfoDTO();
+            placeInfoDTO.setId(placeInfo.getId());
+            placeInfoDTO.setPlaceFieldId(placeInfo.getPlaceFieldId());
+            placeInfoDTO.setType(placeInfo.getType());
+            placeInfoDTO.setName(placeInfo.getName());
+            placeInfoDTO.setPrice(placeInfo.getPrice());
+            placeInfoDTO.setCityId(placeInfo.getCityId());
+            placeInfoDTO.setProvinceId(placeInfo.getProvinceId());
+            placeInfoDTO.setAddress(placeInfo.getAddress());
+            placeInfoDTO.setPhoneNumber(placeInfo.getPhoneNumber());
+            placeInfoDTO.setKapora(placeInfo.getKapora());
+            placeInfoDTO.setStartTime(placeInfo.getStartTime());
+            placeInfoDTO.setEndTime(placeInfo.getEndTime());
+            placeInfoDTOS.add(placeInfoDTO);
+        }
+        return placeInfoDTOS;
     }
 
     public List<PlaceIdDTO> getPlacesByPlaceFieldId(Long id) {
-        return convertListDTO(placeInfoRepository.findPlaceInfoByPlaceFieldId(id));
+        return convertListDTO(placeInfoRepository.getPlaceInfoByPlaceFieldId(id));
     }
 
     private List<PlaceIdDTO> convertListDTO(List<PlaceInfo> placeInfoList){
@@ -77,14 +142,15 @@ public class PlaceInfoService {
                 placeIdDTO.setType(placeInfo.getType());
                 placeIdDTO.setName(placeInfo.getName());
                 placeIdDTO.setPrice(placeInfo.getPrice());
-                placeIdDTO.setCity_id(placeInfo.getCity_id());
-                placeIdDTO.setProvince_id(placeInfo.getProvince_id());
+                placeIdDTO.setCityId(placeInfo.getCityId());
+                placeIdDTO.setProvinceId(placeInfo.getProvinceId());
                 placeIdDTO.setAddress(placeInfo.getAddress());
-                placeIdDTO.setPhone_number(placeInfo.getPhone_number());
+                placeIdDTO.setPhoneNumber(placeInfo.getPhoneNumber());
                 placeIdDTOList.add(placeIdDTO);
         }
         return placeIdDTOList;
     }
+
 
 
 }

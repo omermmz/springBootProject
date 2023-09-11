@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewPlaceRequest {
-    private String status;
+    //private String status;
     private Long company_id;
     private String type;
     private String name;
@@ -19,4 +19,7 @@ public class NewPlaceRequest {
     private Long province_id;
     private String address;
     private Long phone_number;
+    private Long kapora;
+    private String start_time;
+    private String end_time;
 }

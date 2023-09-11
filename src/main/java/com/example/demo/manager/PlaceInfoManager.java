@@ -1,5 +1,6 @@
 package com.example.demo.manager;
 
+import com.example.demo.model.dto.PlaceInfoDTO;
 import com.example.demo.model.entity.PlaceInfo;
 import com.example.demo.model.request.NewPlaceInfoRequest;
 import com.example.demo.model.vo.NewPlaceInfoVo;
@@ -38,7 +39,7 @@ public class PlaceInfoManager {
             return newPlaceInfoVo;
         }
 
-    public List<PlaceInfo> getPlaceInfos() {
+    public List<PlaceInfoDTO> getPlaceInfos() {
         return placeInfoService.getPlaceInfos();
     }
 }

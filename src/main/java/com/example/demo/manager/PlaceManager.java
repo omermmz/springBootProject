@@ -1,6 +1,8 @@
 package com.example.demo.manager;
 
+import com.example.demo.model.dto.PlaceDTO;
 import com.example.demo.model.dto.PlaceIdDTO;
+import com.example.demo.model.dto.PlaceInfoDTO;
 import com.example.demo.model.entity.PlaceField;
 import com.example.demo.model.request.NewPlaceInfoRequest;
 import com.example.demo.model.request.NewPlaceRequest;
@@ -18,9 +20,9 @@ public class PlaceManager {
 
     private final PlaceService placeService;
 
-    public void initializePlace(NewPlaceRequest newPlaceRequest) {
+    public PlaceDTO initializePlace(NewPlaceRequest newPlaceRequest) {
         NewPlaceVo newPlaceVo = new NewPlaceVo();
-        newPlaceVo.setStatus(newPlaceRequest.getStatus());
+        //newPlaceVo.setStatus(newPlaceRequest.getStatus());
         newPlaceVo.setCompany_id(newPlaceRequest.getCompany_id());
         newPlaceVo.setType(newPlaceRequest.getType());
         newPlaceVo.setName(newPlaceRequest.getName());
@@ -29,10 +31,13 @@ public class PlaceManager {
         newPlaceVo.setProvince_id(newPlaceRequest.getProvince_id());
         newPlaceVo.setAddress(newPlaceRequest.getAddress());
         newPlaceVo.setPhone_number(newPlaceRequest.getPhone_number());
-        placeService.addNewPlace(newPlaceVo);
+        newPlaceVo.setKapora(newPlaceRequest.getKapora());
+        newPlaceVo.setStartTime(newPlaceRequest.getStart_time());
+        newPlaceVo.setEndTime(newPlaceRequest.getEnd_time());
+       return placeService.addNewPlace(newPlaceVo);
     }
 
-    public List<PlaceField> getPLaces() {
+    public List<PlaceInfoDTO> getPLaces() {
         return placeService.getPlaces();
     }
 
@@ -43,5 +48,25 @@ public class PlaceManager {
 
     public List<PlaceIdDTO> getPLacesById(Long id) {
         return placeService.getPlacesById(id);
+    }
+
+    public List<PlaceInfoDTO> getPlacesByCity(String cityName) {
+        return placeService.getPlacesByCity(cityName);
+    }
+
+    public List<PlaceInfoDTO> getPlacesByCityAndProvince(String cityName, String provinceName) {
+        return placeService.getPlacesByCityAndProvince(cityName,provinceName);
+    }
+
+    public List<PlaceInfoDTO> getPlacesByCityAndProvinceWithBetweenPrice(String cityName, String provinceName, Long minPrice, Long maxPrice) {
+        return placeService.getPlacesByCityAndProvinceWithBetweenPrice(cityName,provinceName,minPrice,maxPrice);
+    }
+
+    public List<PlaceInfoDTO> getAllPlacesWithBetweenPrice(Long minPrice, Long maxPrice) {
+        return placeService.getAllPlacesWithBetweenPrice(minPrice,maxPrice);
+    }
+
+    public List<PlaceInfoDTO> getPlacesByCityWithBetweenPrice(String cityName, Long minPrice, Long maxPrice) {
+        return placeService.getPlacesByCityWithBetweenPrice(cityName,minPrice,maxPrice);
     }
 }

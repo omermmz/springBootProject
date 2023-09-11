@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.model.dto.*;
+import com.example.demo.model.entity.Role;
 import com.example.demo.model.entity.User;
 import com.example.demo.model.vo.*;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,12 +21,15 @@ public class CompanyUserService {
     private final UserInfoService userInfoService;
     private final UserCredentialService userCredentialService;
     private final CompanyEmployeeService companyEmployeeService;
+    private final RoleService roleService;
+
+    private final PlaceService placeService;
 
     public UserDTO addNewCompanyUser(NewCompanyUserVo newCompanyUserVo) {
         NewCompanyVo newCompanyVo = convertCompany(newCompanyUserVo);
         CompanyDTO companyDTO = companyService.addNewCompany(newCompanyVo);
 
-        User user1 = convert(newCompanyUserVo);
+        User user1 = convert();
         user1 = userRepository.save(user1);
 
         NewUserInfoVo newUserInfoVo = convertUserInfo(newCompanyUserVo);
@@ -31,7 +37,9 @@ public class CompanyUserService {
         userInfoService.addNewUserInfo(newUserInfoVo);
 
         NewUserCredentialVo newUserCredentialVo = convertUserCredential(newCompanyUserVo);
+        RoleDTO roleDTO = roleService.findRole("COMPANYUSER");
         newUserCredentialVo.setUserId(user1.getId());
+        newUserCredentialVo.setRoleId(roleDTO.getId());
         userCredentialService.addNewUserCredential(newUserCredentialVo);
 
         NewCompanyEmployeeVo newCompanyEmployeeVo = new NewCompanyEmployeeVo();
@@ -41,15 +49,20 @@ public class CompanyUserService {
         return convert(user1);
     }
 
+    public List<PlaceIdDTO> getAllPlaceByCompanyId(Long companyId) {
+        return placeService.getAllPlaceByCompanyId(companyId);
+
+    }
+
     private NewCompanyVo convertCompany(NewCompanyUserVo newCompanyUserVo){
         NewCompanyVo newCompanyVo = new NewCompanyVo();
-        newCompanyVo.setStatus(newCompanyUserVo.getCompanyStatus());
+        //newCompanyVo.setStatus(newCompanyUserVo.getCompanyStatus());
         newCompanyVo.setName(newCompanyUserVo.getCompanyName());
         return newCompanyVo;
     }
-    private User convert(NewCompanyUserVo newCompanyUserVo){
+    private User convert(){
         User user = new User();
-        user.setStatus(newCompanyUserVo.getUserStatus());
+        user.setStatus("Active");
         return user;
     }
     private NewUserInfoVo convertUserInfo(NewCompanyUserVo newCompanyUserVo){
@@ -81,7 +94,6 @@ public class CompanyUserService {
         List<CompanyUserIdDTO> companyUserIdDTO = fillCompanyUserIdDTO(userInfoDTO);
         companyUserIdDTO = fillCompanyUserIdDTOWithCompanyName(companyUserIdDTO);
         companyUserIdDTO = fillCompanyUserIdDTOWithCredential(companyUserIdDTO);
-
         return  companyUserIdDTO;
     }
 
@@ -90,7 +102,10 @@ public class CompanyUserService {
             UserCredentialDTO userCredentialDTO = userCredentialService.getCredentialById(companyUserIdDTO1.getUserId());
             companyUserIdDTO1.setEmail(userCredentialDTO.getEmail());
             companyUserIdDTO1.setPassword(userCredentialDTO.getPassword());
+            RoleDTO roleDTO = roleService.getRoles(userCredentialDTO.getRoleId());
+            companyUserIdDTO1.setRoles(roleDTO.getRole());
         }
+
         return companyUserIdDTO;
     }
 
@@ -124,4 +139,18 @@ public class CompanyUserService {
         }
         return companyUserIdDTOList;
     }
+    public UserDTO getUserById(Long id){
+        User user = userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("User id couldn't found"));
+        return convert(user);
+    }
+
+        public WhoAmIDTO whoAmI() {
+            AbstractAuthenticationToken auth = (AbstractAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            Long userId = (Long) auth.getPrincipal();
+            WhoAmIDTO whoAmIDTO = userCredentialService.getUserCredentialWithRoles(userId);
+            return whoAmIDTO;
+
+        }
+
+
 }

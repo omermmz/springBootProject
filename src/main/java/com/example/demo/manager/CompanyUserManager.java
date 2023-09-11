@@ -1,6 +1,9 @@
 package com.example.demo.manager;
 
 import com.example.demo.model.dto.CompanyUserIdDTO;
+import com.example.demo.model.dto.PlaceIdDTO;
+import com.example.demo.model.dto.WhoAmIDTO;
+import com.example.demo.model.request.GetAllPlaceRequest;
 import com.example.demo.model.request.NewCompanyUserRequest;
 import com.example.demo.model.vo.NewCompanyUserVo;
 import com.example.demo.service.CompanyUserService;
@@ -23,7 +26,7 @@ public class CompanyUserManager {
         NewCompanyUserVo newCompanyUserVo = new NewCompanyUserVo();
         newCompanyUserVo.setCompanyName(newCompanyUserRequest.getCompanyName());
         newCompanyUserVo.setCompanyStatus(newCompanyUserRequest.getCompanyStatus());
-        newCompanyUserVo.setUserStatus(newCompanyUserRequest.getUserStatus());
+        //newCompanyUserVo.setUserStatus(newCompanyUserRequest.getUserStatus());
         newCompanyUserVo.setType(newCompanyUserRequest.getType());
         newCompanyUserVo.setName(newCompanyUserRequest.getName());
         newCompanyUserVo.setSurname(newCompanyUserRequest.getSurname());
@@ -34,7 +37,12 @@ public class CompanyUserManager {
         return newCompanyUserVo;
     }
 
-    public List<CompanyUserIdDTO> getUsersByType(String type) {
-        return companyUserService.getUsersByType(type);
+
+    public WhoAmIDTO whoAmI() {
+        return companyUserService.whoAmI();
+    }
+
+    public List<PlaceIdDTO> getAllPlaceByCompanyId(GetAllPlaceRequest getAllPlaceRequest) {
+        return companyUserService.getAllPlaceByCompanyId(getAllPlaceRequest.getCompanyId());
     }
 }

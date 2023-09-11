@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
 
+import com.example.demo.model.dto.PlaceInfoDTO;
 import com.example.demo.model.dto.ReservationDTO;
 import com.example.demo.model.dto.ReservationTimeDTO;
 import com.example.demo.model.entity.Reservation;
 import com.example.demo.model.vo.*;
 import com.example.demo.repository.ReservationRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,6 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final PlaceInfoService placeInfoService;
-
 
 
     public List<Reservation> getReservations() {
@@ -77,13 +78,56 @@ public class ReservationService {
     }
 
 
+    public List<ReservationDTO> getMyReservations(Long userId) {
+        List<Reservation> reservations = reservationRepository.findAllByUserId(userId);
+        return convertReservationDTOList(reservations);
+    }
+
+    public List<ReservationDTO> getPlaceReservations(Long placeFieldId) {
+        List<Reservation> reservations = reservationRepository.findAllByPlaceId(placeFieldId);
+        return convertReservationDTOList(reservations);
+    }
+
+    private List<ReservationDTO> convertReservationDTOList(List<Reservation> reservations) {
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+        for(Reservation reservation : reservations){
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.setId(reservation.getId());
+            reservationDTO.setDate(reservation.getDate());
+            String time;
+            if (Integer.parseInt(reservation.getTime().toString().substring(0,1))==0){
+                if(Integer.parseInt(reservation.getTime().toString().substring(1,2))<9){
+                    time = reservation.getTime().toString().substring(0,5) + "-0" + (Integer.parseInt(reservation.getTime().toString().substring(1,2))+1) + ":00";
+                }
+                else{
+                    time = reservation.getTime().toString().substring(0,5) + "-" + (Integer.parseInt(reservation.getTime().toString().substring(1,2))+1) + ":00";
+                }
+            }else {
+                if(Integer.parseInt(reservation.getTime().toString().substring(0,2))==23){
+                    time = reservation.getTime().toString().substring(0, 5) + "-00:00";
+                }else {
+                    time = reservation.getTime().toString().substring(0, 5) + "-" + (Integer.parseInt(reservation.getTime().toString().substring(0, 2)) + 1) + ":00";
+                }
+            }
+            reservationDTO.setTime(time);
+            reservationDTO.setPlaceId(reservation.getPlaceId());
+            PlaceInfoDTO placeInfoDTO = placeInfoService.getPlaceById(reservation.getPlaceId());
+            reservationDTO.setPlaceName(placeInfoDTO.getName());
+            reservationDTO.setPlaceAddress(placeInfoDTO.getAddress());
+            reservationDTO.setUserId(reservation.getUserId());
+            reservationDTO.setCreateDate(reservation.getCreateDate());
+            reservationDTO.setUpdateDate(reservation.getUpdateDate());
+            reservationDTOS.add(reservationDTO);
+        }
+        return reservationDTOS;
+    }
 
 
     private ReservationDTO convert(Reservation reservation) {
         ReservationDTO dto = new ReservationDTO();
         dto.setId(reservation.getId());
         dto.setDate(reservation.getDate());
-        dto.setTime(reservation.getTime());
+        dto.setTime(reservation.getTime().toString());
         dto.setPlaceId(reservation.getPlaceId());
         dto.setUserId(reservation.getUserId());
         dto.setCreateDate(reservation.getCreateDate());
@@ -92,8 +136,11 @@ public class ReservationService {
     }
 
     private void updateReservation(Reservation reservation1, UpdateReservationVo updateReservationVo) {
-        if (updateReservationVo.getDate() != null && !Objects.equals(reservation1.getDate(), updateReservationVo.getDate())) {
+        if (updateReservationVo.getDate() != null && updateReservationVo.getTime() != null && !Objects.equals(reservation1.getDate(), updateReservationVo.getDate())) {
             reservation1.setDate(updateReservationVo.getDate());
+            reservation1.setTime(updateReservationVo.getTime());
+        }
+        else if (updateReservationVo.getDate() != null && updateReservationVo.getTime() != null && Objects.equals(reservation1.getDate(), updateReservationVo.getDate())) {
             reservation1.setTime(updateReservationVo.getTime());
         }
         reservationRepository.save(reservation1);
@@ -107,13 +154,15 @@ public class ReservationService {
 
 
     public List<ReservationTimeDTO> getReservationsAllEmptyTime(GetEmptyTimeVo getEmptyTimeVo) {
+        PlaceInfoDTO placeInfoDTO = placeInfoService.getPlaceById(getEmptyTimeVo.getPlaceId());
         List<Reservation> reservations = reservationRepository.findReservationByPlaceIdAndDateAndStatus(getEmptyTimeVo.getPlaceId(),getEmptyTimeVo.getDate(),getEmptyTimeVo.getStatus());
-        List<ReservationTimeDTO> reservationTimeDTOList = findReservTime(reservations);
+        List<ReservationTimeDTO> reservationTimeDTOList = findReservTime(reservations,placeInfoDTO.getStartTime(),placeInfoDTO.getEndTime());
         return reservationTimeDTOList;
     }
 
     public List<ReservationTimeDTO> getReservationsAllEmptySpecialTime(GetEmptySpecialTimeVo getEmptySpecialTimeVo) {
-        ArrayList<String> timeSpecialList = findInterval(getEmptySpecialTimeVo.getTimeInterval());
+        PlaceInfoDTO placeInfoDTO = placeInfoService.getPlaceById(getEmptySpecialTimeVo.getPlaceId());
+        ArrayList<String> timeSpecialList = findInterval(getEmptySpecialTimeVo.getTimeInterval(),placeInfoDTO.getStartTime(),placeInfoDTO.getEndTime());
         List<Reservation> reservations = reservationRepository.findReservationByPlaceIdAndDateAndStatus(getEmptySpecialTimeVo.getPlaceId(),getEmptySpecialTimeVo.getDate(),getEmptySpecialTimeVo.getStatus());
         List<ReservationTimeDTO> reservationTimeDTOList = findSpecialReservTime(reservations,timeSpecialList);
         return reservationTimeDTOList;
@@ -140,7 +189,8 @@ public class ReservationService {
         return reservationTimeDTOList;
     }
 
-    private ArrayList<String> findInterval(String timeInterval) {
+    private ArrayList<String> findInterval(String timeInterval,String startTime,String endTime) {
+        ArrayList<String> timeList = fillTimeList(startTime,endTime);
         ArrayList<String> arrayList = new ArrayList<>();
         int startIndex=0;
         int lastIndex=0;
@@ -154,14 +204,100 @@ public class ReservationService {
         }
 
         for(int i=startIndex;i<lastIndex;i++){
-            arrayList.add(timeList[i]);
+          //  arrayList.add(timeList[i]);
         }
         return arrayList;
     }
 
-    private String[] timeList = new String[]{
+    public ArrayList<String> fillTimeList (String startTime,String endTime) {
+        ArrayList<String> timeList = new ArrayList<>();
+
+
+
+        if(endTime.charAt(0) == '0'){
+            for(int i=0;i<24;i++){
+                if(i<Integer.parseInt(endTime.substring(0,2))){
+                    String time = "0" + i + ":00:00-0" + (i+1) + ":00:00";
+                    timeList.add(time);
+                }
+                else if(i>=Integer.parseInt(endTime.substring(0,2)) && i<Integer.parseInt(startTime.substring(0,2)) ){
+                    continue;
+                }else{
+                    if(i<9){
+                        String time = "0" + i + ":00:00-0" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==9){
+                        String time = "0" + i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i>9){
+                        String time =  i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==23){
+                        String time = i + ":00:00-00:00:00";
+                        timeList.add(time);
+                    }
+                }
+            }
+        }
+
+        else{
+            if(startTime.charAt(0) == '0'){
+                for(int i= Integer.parseInt(startTime.substring(1,2));i<Integer.parseInt(endTime.substring(0,2));i++){
+                    if(i<9){
+                        String time = "0" + i + ":00:00-0" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==9){
+                        String time = "0" + i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i>9){
+                        String time =  i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==23){
+                        String time = i + ":00:00-00:00:00";
+                        timeList.add(time);
+                    }
+                }
+            }
+            else{
+                for(int i= Integer.parseInt(startTime.substring(0,2));i<Integer.parseInt(endTime.substring(0,2));i++){
+
+                    if(i<9){
+                        String time = "0" + i + ":00:00-0" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==9){
+                        String time = "0" + i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i>9){
+                        String time =  i + ":00:00-" + (i+1) + ":00:00";
+                        timeList.add(time);
+                    }
+                    else if(i==23){
+                        String time = i + ":00:00-00:00:00";
+                        timeList.add(time);
+                    }
+                }
+            }
+        }
+        return timeList;
+    }
+    private String[] timeList1 = new String[]{
             "00:00:00-01:00:00",
             "01:00:00-02:00:00",
+            "02:00:00-03:00:00",
+            "03:00:00-04:00:00",
+            "04:00:00-05:00:00",
+            "05:00:00-06:00:00",
+            "06:00:00-07:00:00",
+            "07:00:00-08:00:00",
+            "08:00:00-09:00:00",
             "09:00:00-10:00:00",
             "10:00:00-11:00:00",
             "11:00:00-12:00:00",
@@ -179,7 +315,8 @@ public class ReservationService {
             "23:00:00-00:00:00"
     };
 
-    private List<ReservationTimeDTO> findReservTime(List<Reservation> reservations) {
+    private List<ReservationTimeDTO> findReservTime(List<Reservation> reservations,String startTime,String endTime) {
+        ArrayList<String> timeList = fillTimeList(startTime,endTime);
         List<ReservationTimeDTO> reservationTimeDTOList = new ArrayList<>();
         for(String time: timeList){
             boolean flag=true;
@@ -199,8 +336,6 @@ public class ReservationService {
         }
         return reservationTimeDTOList;
     }
-
-
 
 
 

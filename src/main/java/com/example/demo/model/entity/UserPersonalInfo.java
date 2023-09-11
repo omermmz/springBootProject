@@ -20,7 +20,7 @@ public class UserPersonalInfo {
     @Column(name = "id")
     private Long id;
     @Column(name = "user_id")
-    private Long user_id;
+    private Long userId;
     @Column(name = "type")
     private String type;
     @Column(name = "name")
@@ -30,5 +30,5 @@ public class UserPersonalInfo {
     @Column(name = "birthdate")
     private LocalDate birthdate;
     @Column(name = "phone_number")
-    private Long phone_number;
+    private Long phoneNumber;
 }

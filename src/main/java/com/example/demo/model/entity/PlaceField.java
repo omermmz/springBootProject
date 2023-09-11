@@ -25,11 +25,11 @@ public class PlaceField {
     @Column(name="status")
     private String status;
     @Column(name="company_id")
-    private Long company_id;
+    private Long companyId;
     @CreationTimestamp
     @Column(name="create_date")
-    private LocalDateTime create_date;
+    private LocalDateTime createDate;
     @UpdateTimestamp
     @Column(name = "update_date")
-    private LocalDateTime update_date;
+    private LocalDateTime updateDate;
 }

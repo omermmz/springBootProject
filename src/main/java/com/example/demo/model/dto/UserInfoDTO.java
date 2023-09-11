@@ -16,6 +16,7 @@ public class UserInfoDTO {
     private Long id;
     private Long userId;
     private String type;
+    private String companyName;
     private String name;
     private String surname;
     private LocalDate birthdate;

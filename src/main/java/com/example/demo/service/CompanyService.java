@@ -24,7 +24,7 @@ public class CompanyService {
 
     private Company convert(NewCompanyVo newCompanyVo){
         Company company = new Company();
-        company.setStatus(newCompanyVo.getStatus());
+        company.setStatus("Active");
         company.setName(newCompanyVo.getName());
         return company;
     }
@@ -38,9 +38,18 @@ public class CompanyService {
         return companyDTO;
     }
 
+
     public String getCompanyNameById(Long userId) {
         CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getCompanyIdByUserId(userId);
         Company company = companyRepository.findCompanyById(companyEmployeeDTO.getCompanyId());
         return  company.getName();
+    }
+
+    public CompanyDTO updateCompanyName(String companyName,Long userId){
+        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getCompanyIdByUserId(userId);
+        Company company = companyRepository.findCompanyById(companyEmployeeDTO.getCompanyId());
+        company.setName(companyName);
+        companyRepository.save(company);
+        return convert(company);
     }
 }

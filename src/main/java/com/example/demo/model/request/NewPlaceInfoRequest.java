@@ -18,4 +18,6 @@ public class NewPlaceInfoRequest {
     private Long province_id;
     private String address;
     private Long phone_number;
+    private String startTime;
+    private String endTime;
 }

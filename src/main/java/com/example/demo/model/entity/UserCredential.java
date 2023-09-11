@@ -1,8 +1,11 @@
 package com.example.demo.model.entity;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,4 +25,6 @@ public class UserCredential {
     private String email;
     @Column(name = "password")
     private String password;
+    @Column(name = "roles_id")
+    private Long rolesId;
 }

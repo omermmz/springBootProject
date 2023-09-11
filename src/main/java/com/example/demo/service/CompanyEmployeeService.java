@@ -36,4 +36,5 @@ public class CompanyEmployeeService {
         CompanyEmployee companyEmployee = companyEmployeeRepository.findCompanyEmployeeByUserId(userId);
         return convert(companyEmployee);
     }
+
 }

@@ -25,11 +25,17 @@ public class PlaceInfo {
     @Column(name = "price")
     private Long price;
     @Column(name = "city_id")
-    private Long city_id;
+    private Long cityId;
     @Column(name = "province_id")
-    private Long province_id;
+    private Long provinceId;
     @Column(name = "address")
     private String address;
     @Column(name="phone_number")
-    private Long phone_number;
+    private Long phoneNumber;
+    @Column(name = "kapora")
+    private Long kapora;
+    @Column(name="start_time")
+    private String startTime;
+    @Column(name = "end_time")
+    private String endTime;
 }

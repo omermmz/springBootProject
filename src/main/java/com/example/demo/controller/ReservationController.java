@@ -1,14 +1,17 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.dto.ReservationDTO;
 import com.example.demo.model.dto.ReservationTimeDTO;
 import com.example.demo.model.request.*;
 import com.example.demo.manager.ResarvationManager;
 import com.example.demo.model.entity.Reservation;
+import com.example.demo.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +40,7 @@ public class ReservationController {
         reservationGetRequest.setUserName(userName);
         return resarvationManager.getReservationsByUser(reservationGetRequest);
     }
-    @GetMapping(path = "/getemptytime")
+    @PostMapping(path = "/getemptytime")
     public List<ReservationTimeDTO> getReservationsAllEmptyTime(@RequestBody GetEmptyTimeRequest getEmptyTimeRequest){
         return resarvationManager.getReservationsAllEmptyTime(getEmptyTimeRequest);
     }
@@ -47,6 +50,19 @@ public class ReservationController {
         return resarvationManager.getReservationsAllEmptySpecialTime(getEmptySpecialTimeRequest);
     }
 
+    @GetMapping(path = "/myReservations/{userId}")
+    public List<ReservationDTO> getMyReservations(@PathVariable("userId") Long userId){
+        return resarvationManager.getMyReservations(userId);
+    }
+    @PostMapping(path = "/getPlaceReservations")
+    public List<ReservationDTO> getPlaceReservations(@RequestBody ShowPlaceReservationRequest showPlaceReservationRequest){
+        return resarvationManager.getPLaceReservations(showPlaceReservationRequest);
+    }
+
+    @GetMapping(path = "/timeicindeneme")
+    public ArrayList<String> timeicindeneme(){
+        return resarvationManager.fillTimeList("09:00:00","23:00:00");
+    }
     @PostMapping
     public void registerNewReservation(@RequestBody NewReservationRequest reservationRequest){
         resarvationManager.initializeReservation(reservationRequest);

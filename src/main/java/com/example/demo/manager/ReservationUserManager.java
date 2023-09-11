@@ -1,10 +1,14 @@
 package com.example.demo.manager;
 
+import com.example.demo.model.dto.CompanyUserIdDTO;
+import com.example.demo.model.dto.ReservationUserIdDTO;
 import com.example.demo.model.request.NewReservationUserRequest;
 import com.example.demo.model.vo.NewReservationUserVo;
 import com.example.demo.service.ReservationUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,4 +32,6 @@ public class ReservationUserManager {
         newReservationUserVo.setPassword(newReservationUserRequest.getPassword());
         return newReservationUserVo;
     }
+
+
 }

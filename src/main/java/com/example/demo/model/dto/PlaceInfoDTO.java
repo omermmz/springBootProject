@@ -12,12 +12,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PlaceInfoDTO {
     private Long id;
-    private Long place_field_id;
+    private Long placeFieldId;
     private String type;
     private String name;
     private Long price;
-    private Long city_id;
-    private Long province_id;
+    private Long cityId;
+    private Long provinceId;
     private String address;
-    private Long phone_number;
+    private Long phoneNumber;
+    private Long kapora;
+    private String startTime;
+    private String endTime;
 }

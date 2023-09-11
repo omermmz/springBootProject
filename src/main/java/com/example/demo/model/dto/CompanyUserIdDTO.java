@@ -23,4 +23,5 @@ public class CompanyUserIdDTO {
     private Long telNo;
     private String email;
     private String password;
+    private String roles;
 }

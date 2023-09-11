@@ -15,7 +15,6 @@ import java.util.Date;
 public class NewCompanyUserRequest {
     private String companyStatus;
     private String companyName;
-    private String userStatus;
     private String type;
     private String name;
     private String surname;

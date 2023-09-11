@@ -19,5 +19,5 @@ public class Province {
     @Column(name="name")
     private String name;
     @Column(name = "city_id")
-    private Long city_id;
+    private Long cityId;
 }

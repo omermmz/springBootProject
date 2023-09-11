@@ -18,4 +18,7 @@ public class NewPlaceInfoVo {
     private Long province_id;
     private String address;
     private Long phone_number;
+    private Long kapora;
+    private String startTime;
+    private String endTime;
 }

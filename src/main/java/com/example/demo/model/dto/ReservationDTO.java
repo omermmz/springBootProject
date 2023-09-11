@@ -17,8 +17,10 @@ public class ReservationDTO {
 
     private Long id;
     private LocalDate date;
-    private LocalTime time;
+    private String time;
     private Long placeId;
+    private String placeName;
+    private String placeAddress;
     private Long userId;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;

@@ -1,5 +1,6 @@
 package com.example.demo.manager;
 
+import com.example.demo.model.dto.ReservationDTO;
 import com.example.demo.model.dto.ReservationTimeDTO;
 import com.example.demo.model.entity.Reservation;
 import com.example.demo.model.request.*;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -78,5 +80,17 @@ public class ResarvationManager {
         getEmptySpecialTimeVo.setStatus(getEmptySpecialTimeRequest.getStatus());
         getEmptySpecialTimeVo.setTimeInterval(getEmptySpecialTimeRequest.getTimeInterval());
         return getEmptySpecialTimeVo;
+    }
+
+    public ArrayList<String> fillTimeList(String s, String s1) {
+        return reservationService.fillTimeList(s,s1);
+    }
+
+    public List<ReservationDTO> getMyReservations(Long userId) {
+        return reservationService.getMyReservations(userId);
+    }
+
+    public List<ReservationDTO> getPLaceReservations(ShowPlaceReservationRequest showPlaceReservationRequest) {
+        return reservationService.getPlaceReservations(showPlaceReservationRequest.getPlaceFieldId());
     }
 }

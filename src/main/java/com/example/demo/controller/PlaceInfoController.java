@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.manager.PlaceInfoManager;
+import com.example.demo.model.dto.PlaceInfoDTO;
 import com.example.demo.model.entity.PlaceInfo;
 import com.example.demo.model.request.NewPlaceInfoRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class PlaceInfoController {
 
 
     @GetMapping
-    public List<PlaceInfo> getPlaceInfos(){
+    public List<PlaceInfoDTO> getPlaceInfos(){
         return placeInfoManager.getPlaceInfos();
     }
 
