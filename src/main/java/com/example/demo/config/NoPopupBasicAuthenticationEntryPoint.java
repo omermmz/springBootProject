@@ -24,6 +24,10 @@ public class NoPopupBasicAuthenticationEntryPoint implements AuthenticationEntry
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setHeader("Content-Type", "application/json");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+        response.setHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials,Access-Control-Allow-Headers,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Access-Control-Allow-Origin,Access-Control-Allow-Methods");
         //PrintWriter out = response.getWriter();
         //out.print(gson.toJson(errorResponse));
         response.flushBuffer();

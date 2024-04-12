@@ -10,7 +10,7 @@ import com.example.demo.model.request.UpdateMailRequest;
 import com.example.demo.model.request.UpdatePasswordRequest;
 import com.example.demo.model.request.UpdateUserInfoRequest;
 import com.example.demo.service.UserService;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.RequestContext;
 import org.springframework.http.HttpCookie;
@@ -32,6 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/user")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3001", allowCredentials = "true")
 public class UserController {
 
     private final UserManager userManager;

@@ -23,8 +23,10 @@ public class ProvinceService {
     }
 
     private Province isProvinceExists(Province province){
-        if(provinceRepository.findByName(province.getName()).isPresent()){
-            province = provinceRepository.findByName(province.getName()).orElseThrow(()->new IllegalArgumentException("province doesn't exist"));
+        Boolean isExist = provinceRepository.findProvinceByName(province.getName()).isPresent();
+
+        if(isExist){
+            province = provinceRepository.findProvinceByName(province.getName()).orElseThrow(()->new IllegalArgumentException("province doesn't exist"));
             return  province;
         }
         province = provinceRepository.save(province);
@@ -32,7 +34,7 @@ public class ProvinceService {
     }
 
     public Long getProvinceByName(String provinceName){
-        Province province = provinceRepository.findByName(provinceName).orElseThrow(() -> new IllegalArgumentException("Province is not exist"));
+        Province province = provinceRepository.findProvinceByName(provinceName).orElseThrow(() -> new IllegalArgumentException("Province is not exist"));
         return province.getId();
     }
     public List<Province> getProvincesById(Long id) {

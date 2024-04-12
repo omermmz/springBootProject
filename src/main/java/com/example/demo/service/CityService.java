@@ -8,7 +8,7 @@ import com.example.demo.model.entity.Province;
 import com.example.demo.model.vo.NewCityVo;
 import com.example.demo.model.vo.NewProvinceVo;
 import com.example.demo.repository.CityRepository;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -55,7 +55,7 @@ public class CityService {
 
     private City cityIsExist(City city){
         if(cityRepository.findCityByName(city.getName()).isPresent()){
-            city = cityRepository.findCityByName(city.getName()).orElseThrow(()-> new IllegalArgumentException("city not found"));
+            city = cityRepository.findCityByName(city.getName()).orElseThrow(()-> new IllegalArgumentException("existing city not found"));
             return city;
         }
         city = cityRepository.save(city);

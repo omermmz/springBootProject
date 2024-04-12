@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path="api/placeinfo")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3001", allowCredentials = "true")
 public class PlaceInfoController {
 
     private final PlaceInfoManager placeInfoManager;

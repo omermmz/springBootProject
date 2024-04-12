@@ -6,7 +6,7 @@ import com.example.demo.model.dto.CityGetDTO;
 import com.example.demo.model.entity.City;
 import com.example.demo.model.request.NewCityRequest;
 import com.example.demo.service.CityService;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/city")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3001", allowCredentials = "true")
 public class CityController {
 
     private final CityManager cityManager;

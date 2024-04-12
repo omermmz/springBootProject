@@ -11,7 +11,9 @@ import com.example.demo.model.vo.NewUserCredentialVo;
 import com.example.demo.repository.CompanyEmployeeRepository;
 import com.example.demo.repository.UserCredentialRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,8 +31,10 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserCredentialService {
+
     private final UserCredentialRepository userCredentialRepository;
     private final UserInfoService userInfoService;
     private final RoleService roleService;
@@ -37,10 +42,11 @@ public class UserCredentialService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     public UserCredentialDTO addNewUserCredential(NewUserCredentialVo newUserCredentialVo) {
         userCredentialIsExist(newUserCredentialVo.getEmail());
         UserCredential userCredential = convert(newUserCredentialVo);
-        userCredential = userCredentialRepository.save(userCredential);
+        userCredential = userCredentialRepository.saveAndFlush(userCredential);
         return convert(userCredential);
     }
 

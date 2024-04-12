@@ -6,14 +6,17 @@ import com.example.demo.model.entity.User;
 import com.example.demo.model.vo.*;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CompanyUserService {
     private final UserRepository userRepository;
@@ -25,6 +28,7 @@ public class CompanyUserService {
 
     private final PlaceService placeService;
 
+
     public UserDTO addNewCompanyUser(NewCompanyUserVo newCompanyUserVo) {
         NewCompanyVo newCompanyVo = convertCompany(newCompanyUserVo);
         CompanyDTO companyDTO = companyService.addNewCompany(newCompanyVo);
@@ -32,10 +36,15 @@ public class CompanyUserService {
         User user1 = convert();
         user1 = userRepository.save(user1);
 
+        addCompanyCredentialAndCompanyEmployee(newCompanyUserVo,user1,companyDTO);
+
         NewUserInfoVo newUserInfoVo = convertUserInfo(newCompanyUserVo);
         newUserInfoVo.setUserId(user1.getId());
         userInfoService.addNewUserInfo(newUserInfoVo);
 
+        return convert(user1);
+    }
+    private void addCompanyCredentialAndCompanyEmployee(NewCompanyUserVo newCompanyUserVo, User user1,CompanyDTO companyDTO){
         NewUserCredentialVo newUserCredentialVo = convertUserCredential(newCompanyUserVo);
         RoleDTO roleDTO = roleService.findRole("COMPANYUSER");
         newUserCredentialVo.setUserId(user1.getId());
@@ -46,7 +55,6 @@ public class CompanyUserService {
         newCompanyEmployeeVo.setUserId(user1.getId());
         newCompanyEmployeeVo.setCompanyId(companyDTO.getId());
         companyEmployeeService.addNewEmployee(newCompanyEmployeeVo);
-        return convert(user1);
     }
 
     public List<PlaceIdDTO> getAllPlaceByCompanyId(Long companyId) {
@@ -146,6 +154,7 @@ public class CompanyUserService {
 
         public WhoAmIDTO whoAmI() {
             AbstractAuthenticationToken auth = (AbstractAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
             Long userId = (Long) auth.getPrincipal();
             WhoAmIDTO whoAmIDTO = userCredentialService.getUserCredentialWithRoles(userId);
             return whoAmIDTO;

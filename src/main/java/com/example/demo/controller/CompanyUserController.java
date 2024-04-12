@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.manager.CompanyUserManager;
-import com.example.demo.model.dto.CompanyUserIdDTO;
-import com.example.demo.model.dto.PlaceIdDTO;
-import com.example.demo.model.dto.ReservationDTO;
-import com.example.demo.model.dto.WhoAmIDTO;
+import com.example.demo.model.dto.*;
 import com.example.demo.model.request.GetAllPlaceRequest;
 import com.example.demo.model.request.NewCompanyUserRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +12,15 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/companyuser")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3001", allowCredentials = "true", allowedHeaders = "Access-Control-Allow-Headers,Access-Control-Allow-Origin,Access-Control-Request-Method, Access-Control-Request-Headers,Origin,Cache-Control, Content-Type, Authorization, Access-Control-Allow-Methods")
 public class CompanyUserController {
     private final CompanyUserManager companyUserManager;
 
 
 
     @PostMapping
-    public void registerNewCompanyUser(@RequestBody NewCompanyUserRequest newCompanyUserRequest){
-        companyUserManager.initializeCompanyUser(newCompanyUserRequest);
+    public UserDTO registerNewCompanyUser(@RequestBody NewCompanyUserRequest newCompanyUserRequest){
+        return companyUserManager.initializeCompanyUser(newCompanyUserRequest);
     }
 
     @PostMapping(path = "/getAllPlace")

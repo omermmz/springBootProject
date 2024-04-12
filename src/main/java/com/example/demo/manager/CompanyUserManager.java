@@ -1,8 +1,6 @@
 package com.example.demo.manager;
 
-import com.example.demo.model.dto.CompanyUserIdDTO;
-import com.example.demo.model.dto.PlaceIdDTO;
-import com.example.demo.model.dto.WhoAmIDTO;
+import com.example.demo.model.dto.*;
 import com.example.demo.model.request.GetAllPlaceRequest;
 import com.example.demo.model.request.NewCompanyUserRequest;
 import com.example.demo.model.vo.NewCompanyUserVo;
@@ -17,9 +15,9 @@ import java.util.List;
 public class CompanyUserManager {
     private final CompanyUserService companyUserService;
 
-    public void initializeCompanyUser(NewCompanyUserRequest newCompanyUserRequest) {
+    public UserDTO initializeCompanyUser(NewCompanyUserRequest newCompanyUserRequest) {
         NewCompanyUserVo newCompanyUserVo = convert(newCompanyUserRequest);
-        companyUserService.addNewCompanyUser(newCompanyUserVo);
+        return companyUserService.addNewCompanyUser(newCompanyUserVo);
     }
 
     private NewCompanyUserVo convert(NewCompanyUserRequest newCompanyUserRequest){

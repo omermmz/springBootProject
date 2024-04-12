@@ -18,6 +18,5 @@ public class NewUserInfoVo {
     private String name;
     private String surname;
     private LocalDate birthdate;
-    private Long phoneNumber;
     private Long telNo;
 }

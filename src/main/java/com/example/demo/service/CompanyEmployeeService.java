@@ -5,11 +5,16 @@ import com.example.demo.model.entity.CompanyEmployee;
 import com.example.demo.model.vo.NewCompanyEmployeeVo;
 import com.example.demo.repository.CompanyEmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CompanyEmployeeService {
+
     private final CompanyEmployeeRepository companyEmployeeRepository;
 
     public CompanyEmployeeDTO addNewEmployee(NewCompanyEmployeeVo newCompanyEmployeeVo) {
